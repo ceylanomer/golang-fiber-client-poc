@@ -35,6 +35,7 @@ func main() {
 	app.Get("/health", handler.Handle(healthHandler))
 
 	app.Get("/test", func(c *fiber.Ctx) error {
+		zap.L().Info("Test request")
 		return c.SendString("Hello, World 👋!")
 	})
 
@@ -45,7 +46,7 @@ func main() {
 	})
 
 	app.Get("/error", func(c *fiber.Ctx) error {
-		zap.L().Error("Error request")
+		zap.L().Info("Error request")
 		return c.Status(fiber.StatusInternalServerError).SendString("error")
 	})
 
