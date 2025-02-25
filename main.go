@@ -1,16 +1,19 @@
 package main
 
 import (
-	"github.com/gofiber/contrib/otelfiber/v2"
-	"github.com/gofiber/fiber/v2"
-	recover "github.com/gofiber/fiber/v2/middleware/recover"
-	"go.uber.org/zap"
+	"golang-fiber-client-poc/app/healthcheck"
+	"golang-fiber-client-poc/pkg/handler"
 	_ "golang-fiber-client-poc/pkg/log"
 	"golang-fiber-client-poc/pkg/tracer"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/gofiber/contrib/otelfiber/v2"
+	"github.com/gofiber/fiber/v2"
+	recover "github.com/gofiber/fiber/v2/middleware/recover"
+	"go.uber.org/zap"
 )
 
 func main() {
@@ -26,6 +29,10 @@ func main() {
 
 	app.Use(recover.New())
 	app.Use(otelfiber.Middleware())
+
+	// Sağlık kontrolü endpoint'i ekleyelim
+	healthHandler := healthcheck.NewHealthCheckHandler()
+	app.Get("/health", handler.Handle(healthHandler))
 
 	app.Get("/test", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World 👋!")
